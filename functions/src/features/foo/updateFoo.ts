@@ -1,9 +1,11 @@
-import * as logger from 'firebase-functions/logger';
 import { Request, Response } from 'express';
+import { createServiceLogger } from '../common/logger/createServiceLogger';
 
-export const updateFoo = async (request: Request, response: Response) => {
+export async function updateFoo(request: Request, response: Response) {
   const fooId = request.params['id'];
 
-  logger.info('Update foo!', { structuredData: true, fooId });
+  const { serviceLogger } = createServiceLogger('updateFoo');
+  serviceLogger.info(`start for ${fooId}`, { fooId });
+
   response.send(`Update this foo - ${fooId}`);
-};
+}

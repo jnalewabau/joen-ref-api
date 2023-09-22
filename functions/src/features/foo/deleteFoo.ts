@@ -1,9 +1,11 @@
-import * as logger from 'firebase-functions/logger';
 import { Request, Response } from 'express';
+import { createServiceLogger } from '../common/logger/createServiceLogger';
 
-export const deleteFoo = async (request: Request, response: Response) => {
+export async function deleteFoo(request: Request, response: Response) {
   const fooId = request.params['id'];
 
-  logger.info('Delete foo!', { structuredData: true, fooId });
+  const { serviceLogger } = createServiceLogger('deleteFoo');
+  serviceLogger.info(`start for ${fooId}`, { fooId });
+
   response.send(`Delete this foos - ${fooId}`);
-};
+}

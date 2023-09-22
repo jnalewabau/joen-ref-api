@@ -1,7 +1,9 @@
-import * as logger from 'firebase-functions/logger';
 import { Request, Response } from 'express';
+import { createServiceLogger } from '../common/logger/createServiceLogger';
 
-export const listFoos = async (request: Request, response: Response) => {
-  logger.info('List all foos', { structuredData: true });
+export async function listFoos(request: Request, response: Response) {
+  const { serviceLogger } = createServiceLogger('listFoos');
+  serviceLogger.info(`start`);
+
   response.send('Have all the foos!');
-};
+}

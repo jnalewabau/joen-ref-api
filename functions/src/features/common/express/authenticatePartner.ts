@@ -1,9 +1,10 @@
-import * as logger from 'firebase-functions/logger';
 import { Request, Response, NextFunction } from 'express';
 
 import { Result, ok } from 'neverthrow';
 import { PartnerInfo } from './types/partnerInfo';
 import { HTTP_INTERNAL_SERVICE_ERROR_CODE, HTTP_UNAUTHORIZED_CODE } from './types/constants';
+import { createServiceLogger } from '../logger/createServiceLogger';
+import { Logger } from 'winston';
 
 /**
  * Authenticates that a call to an API is allowed for a partner - partners
@@ -15,19 +16,18 @@ import { HTTP_INTERNAL_SERVICE_ERROR_CODE, HTTP_UNAUTHORIZED_CODE } from './type
  * @returns
  */
 export async function authenticatePartner(req: Request, resp: Response, next: NextFunction) {
-  //   const { serviceLogger } = createServiceLogger(`authenticatePartnerKey`);
-  logger.debug('Authenticate partner (middleware)');
+  const { serviceLogger } = createServiceLogger(`authenticatePartnerKey`);
 
   try {
     // Get the API key from x-api-key Token
     const xApiKey = req.header('x-api-key') as string;
 
     if (!xApiKey) {
-      logger.error(`authentication failed: No x-api-key in header`);
+      serviceLogger.error(`authentication failed: No x-api-key in header`);
       return resp.status(HTTP_UNAUTHORIZED_CODE).send();
     }
 
-    const findPartnerCall = await findPartnerWithKey(req, xApiKey);
+    const findPartnerCall = await findPartnerWithKey(req, xApiKey, serviceLogger);
 
     if (findPartnerCall.isErr()) {
       const error = findPartnerCall.error;
@@ -37,7 +37,7 @@ export async function authenticatePartner(req: Request, resp: Response, next: Ne
     }
     const partnerInfo = findPartnerCall.value;
 
-    logger.debug(`Found partner ${partnerInfo.name} for this API call`);
+    serviceLogger.debug(`Found partner ${partnerInfo.name} for this API call`);
 
     // Check to see whether the key is still active
     const partnerKey = partnerInfo.apiAccess.find((apiAccess) => apiAccess.apiKey === xApiKey);
@@ -49,7 +49,7 @@ export async function authenticatePartner(req: Request, resp: Response, next: Ne
     }
 
     if (partnerKey.disabled === true) {
-      logger.warn('Call to Partner API with a disabled partner API key');
+      serviceLogger.warn('Call to Partner API with a disabled partner API key');
 
       return resp.status(HTTP_UNAUTHORIZED_CODE).send({
         message: 'API key has been disabled',
@@ -78,6 +78,7 @@ export async function authenticatePartner(req: Request, resp: Response, next: Ne
 export async function findPartnerWithKey(
   req: Request,
   partnerKey: string,
+  logger: Logger,
 ): Promise<Result<PartnerInfo, string>> {
   logger.debug(`Find partner with key - ${partnerKey}`);
 
@@ -86,7 +87,7 @@ export async function findPartnerWithKey(
     name: 'test',
     apiAccess: [
       {
-        disabled: true,
+        disabled: false,
         apiKey: 'apikey_123',
         role: 'fully-trusted-partner',
       },

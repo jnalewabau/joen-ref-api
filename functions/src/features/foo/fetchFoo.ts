@@ -1,9 +1,11 @@
-import * as logger from 'firebase-functions/logger';
 import { Request, Response } from 'express';
+import { createServiceLogger } from '../common/logger/createServiceLogger';
 
-export const readFoo = async (request: Request, response: Response) => {
+export async function readFoo(request: Request, response: Response) {
   const fooId = request.params['id'];
 
-  logger.info(`Read foo - ${fooId}!`, { structuredData: true, fooId });
+  const { serviceLogger } = createServiceLogger('readFoo');
+  serviceLogger.info(`start for ${fooId}`, { fooId });
+
   response.send(`Have this foo - ${fooId}`);
-};
+}
