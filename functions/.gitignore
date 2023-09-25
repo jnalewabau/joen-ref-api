@@ -9,3 +9,7 @@ typings/
 node_modules/
 ui-debug.log
 .runtimeconfig.json
+.env
+.env.*
+service-account.json
+

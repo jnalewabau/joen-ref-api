@@ -13,7 +13,6 @@ import { Foo } from './foo';
 export async function listFoos(request: Request, response: Response) {
   const { serviceLogger } = createServiceLogger('listFoos');
   serviceLogger.info(`start`);
-
   const result = await listFoosHandler(serviceLogger);
 
   if (result.isErr()) {
