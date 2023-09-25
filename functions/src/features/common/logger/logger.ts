@@ -1,4 +1,4 @@
-// spell-checker:ignore datadog datadogloglevel ddsource ddtags datadogapikey
+// spell-checker:ignore datadogapikey ddsource ddtags
 import * as winston from 'winston';
 const { combine, timestamp, colorize } = winston.format;
 import { consoleFormat } from 'winston-console-format';

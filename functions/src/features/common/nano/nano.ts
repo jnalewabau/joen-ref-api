@@ -13,3 +13,10 @@ const nanoid = customAlphabet(nolookalikesSafe, 20);
 export function nanoIdForCorrelationIds() {
   return `cid_${nanoid()}`;
 }
+
+/**
+ * @returns An external Id for Foo
+ */
+export function generateFooExternalId() {
+  return `foo_${nanoid()}`;
+}
