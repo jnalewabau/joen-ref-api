@@ -8,7 +8,8 @@
     "lint": "eslint --ext .js,.ts .",
     "lint:fix": "eslint --ext .js,.ts . --fix",
     "logs": "firebase functions:log",
-    "serve": "npm run build && firebase emulators:start --only functions",
+    "serve": "firebase emulators:start --only functions",
+    "serve:full": "npm run build && firebase emulators:start --only functions",
     "joe": "firebase emulators:start --only functions --debug",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell"

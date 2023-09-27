@@ -6,9 +6,9 @@ import { logger } from './logger';
 
  * @param serviceName The name of the logger
  */
-export function createServiceLogger(serviceName: string) {
+export function createServiceLogger(serviceName: string, passedCid?: string) {
   // Always generate a correlation Id
-  const correlationId = nanoIdForCorrelationIds();
+  const correlationId = passedCid ?? nanoIdForCorrelationIds();
   const serviceLogger = logger.child({
     service: serviceName,
     cId: correlationId,

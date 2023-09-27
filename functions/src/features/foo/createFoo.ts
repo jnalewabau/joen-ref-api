@@ -11,8 +11,8 @@ import {
   HTTP_INTERNAL_SERVICE_ERROR_CODE,
   HTTP_SUCCESS_CODE,
 } from '../common/express/types/constants';
-import { FSCollection } from '../common/firebase/firestore/FSCollectionSimple';
 import { generateFooExternalId } from '../common/nano/nano';
+import { FSCollectionConfig } from '../common/firebase/firestore/FSCollectionConfig';
 
 /**
  *
@@ -59,8 +59,8 @@ async function createFooHandler(
 
   functionLogger.debug(`start create for ${fooToCreate}`);
 
-  // Use the FSCollection directly to add this to Firestore
-  const fsHelper = new FSCollection<Foo>(`partnerData/partner1/foo`);
+  // Use firestore helper class
+  const fsHelper = FSCollectionConfig.partnerFoos('partner1');
   const externalId = generateFooExternalId();
   fooToCreate.externalId = externalId;
 

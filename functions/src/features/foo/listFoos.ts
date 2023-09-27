@@ -6,9 +6,9 @@ import {
 } from '../common/express/types/constants';
 import { Logger } from 'winston';
 import { Result, err, ok } from 'neverthrow';
-import { FSCollection } from '../common/firebase/firestore/FSCollectionSimple';
 import { createFunctionLogger } from '../common/logger/createFunctionLogger';
 import { Foo } from './foo';
+import { FSCollectionConfig } from '../common/firebase/firestore/FSCollectionConfig';
 
 export async function listFoos(request: Request, response: Response) {
   const { serviceLogger } = createServiceLogger('listFoos');
@@ -35,8 +35,8 @@ async function listFoosHandler(
 
   functionLogger.debug(`start list Foos`);
 
-  // Use the FSCollection directly to add this to Firestore
-  const fsHelper = new FSCollection<Foo>(`partnerData/partner1/foo`);
+  // Use firestore helper class
+  const fsHelper = FSCollectionConfig.partnerFoos('partner1');
 
   const result = await fsHelper.getAll();
 

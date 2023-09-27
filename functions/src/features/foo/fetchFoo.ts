@@ -4,11 +4,11 @@ import { Logger } from 'winston';
 import { Result, err, ok } from 'neverthrow';
 import { Foo } from './foo';
 import { createFunctionLogger } from '../common/logger/createFunctionLogger';
-import { FSCollection } from '../common/firebase/firestore/FSCollectionSimple';
 import {
   HTTP_INTERNAL_SERVICE_ERROR_CODE,
   HTTP_SUCCESS_CODE,
 } from '../common/express/types/constants';
+import { FSCollectionConfig } from '../common/firebase/firestore/FSCollectionConfig';
 
 export async function readFoo(request: Request, response: Response) {
   const fooId = request.params['id'];
@@ -36,8 +36,8 @@ async function readFooHandler(id: string, parentLogger: Logger): Promise<Result<
 
   functionLogger.debug(`start for ${id}`);
 
-  // Use the FSCollection directly to add this to Firestore
-  const fsHelper = new FSCollection<Foo>(`partnerData/partner1/foo`);
+  // Use firestore helper class
+  const fsHelper = FSCollectionConfig.partnerFoos('partner1');
 
   const result = await fsHelper.getSingleWithProperty('externalId', id);
 

@@ -2,14 +2,14 @@ import { Request, Response } from 'express';
 import { createServiceLogger } from '../common/logger/createServiceLogger';
 import { Result, err, ok } from 'neverthrow';
 import { Logger } from 'winston';
-import { FSCollection } from '../common/firebase/firestore/FSCollectionSimple';
 import { createFunctionLogger } from '../common/logger/createFunctionLogger';
-import { Foo, FooDeepPartial, FooDeepPartialSchema } from './foo';
+import { FooDeepPartial, FooDeepPartialSchema } from './foo';
 import {
   HTTP_BAD_REQUEST_CODE,
   HTTP_INTERNAL_SERVICE_ERROR_CODE,
   HTTP_SUCCESS_CODE,
 } from '../common/express/types/constants';
+import { FSCollectionConfig } from '../common/firebase/firestore/FSCollectionConfig';
 
 export async function updateFoo(request: Request, response: Response) {
   const fooId = request.params['id'];
@@ -33,7 +33,7 @@ export async function updateFoo(request: Request, response: Response) {
     return;
   }
 
-  response.status(HTTP_SUCCESS_CODE).send(`Created foo: ${result.value}`);
+  response.status(HTTP_SUCCESS_CODE).send();
 }
 
 /**
@@ -50,8 +50,8 @@ async function updateFooHandler(
 
   functionLogger.debug(`start`);
 
-  // Use the FSCollection directly to add this to Firestore
-  const fsHelper = new FSCollection<Foo>(`partnerData/partner1/foo`);
+  // Use firestore helper class
+  const fsHelper = FSCollectionConfig.partnerFoos('partner1');
 
   const findResult = await fsHelper.getSingleWithProperty('externalId', externalId);
 
