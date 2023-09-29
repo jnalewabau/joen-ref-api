@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { Result, ok } from 'neverthrow';
-import { PartnerInfo } from './types/partnerInfo';
 import { HTTP_INTERNAL_SERVICE_ERROR_CODE, HTTP_UNAUTHORIZED_CODE } from './types/constants';
 import { createServiceLogger } from '../logger/createServiceLogger';
-import { Logger } from 'winston';
+import { findPartnerWithKey } from './services/findPartnerWithKey';
 
 /**
  * Authenticates that a call to an API is allowed for a partner - partners
@@ -40,7 +38,7 @@ export async function authenticatePartner(req: Request, resp: Response, next: Ne
     serviceLogger.debug(`Found partner ${partnerInfo.name} for this API call`);
 
     // Check to see whether the key is still active
-    const partnerKey = partnerInfo.apiAccess.find((apiAccess) => apiAccess.apiKey === xApiKey);
+    const partnerKey = partnerInfo.apiKeys.find((key) => key.apiKey === xApiKey);
 
     if (!partnerKey) {
       return resp.status(HTTP_UNAUTHORIZED_CODE).send({
@@ -66,33 +64,6 @@ export async function authenticatePartner(req: Request, resp: Response, next: Ne
   } catch (error) {
     return resp.status(HTTP_INTERNAL_SERVICE_ERROR_CODE).send();
   }
-}
-
-/**
- * Express middleware that checks to see if we can identify the partner calling
- * an API.
- *
- * @param req
- * @param partnerKey
- */
-export async function findPartnerWithKey(
-  req: Request,
-  partnerKey: string,
-  logger: Logger,
-): Promise<Result<PartnerInfo, string>> {
-  logger.debug(`Find partner with key - ${partnerKey}`);
-
-  return ok({
-    partnerId: 'partner_123',
-    name: 'test',
-    apiAccess: [
-      {
-        disabled: false,
-        apiKey: 'apikey_123',
-        role: 'fully-trusted-partner',
-      },
-    ],
-  });
 }
 
 //   const rf = new UpstreetResponseFactory(fnLogger, functionName);

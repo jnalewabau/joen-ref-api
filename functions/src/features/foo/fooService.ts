@@ -7,10 +7,10 @@ import { readFoo } from './fetchFoo';
 import { deleteFoo } from './deleteFoo';
 import { updateFoo } from './updateFoo';
 import { authenticatePartner } from '../common/express/authenticatePartner';
-import { initialiseFirebaseApp } from '../common/firebase/initialiseFirebaseApp';
+// import { initialiseFirebaseApp } from '../common/firebase/initialiseFirebaseApp';
 // import { authenticatePartnerKey } from '../../middleware/partnerApis/authenticatePartnerKey';
 
-initialiseFirebaseApp();
+// initialiseFirebaseApp();
 
 const app = express();
 app.use(express.json());

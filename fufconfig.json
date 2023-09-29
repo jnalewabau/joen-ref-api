@@ -1,0 +1,10 @@
+{
+  "groups": [
+    {
+      "name": "middleware",
+      "files": [
+        "functions/src/features/common/express/authenticatePartner.ts"
+      ]
+    }
+  ]
+}

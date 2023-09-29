@@ -15,6 +15,7 @@ import {
 // be set by tests via mock configuration
 
 export function initialiseFirebaseApp() {
+  console.log(`### Initializing the Firestore app ###`);
   const serviceAccount = {
     type: 'service_account',
     projectId: SA_PROJECT_NAME,
@@ -28,7 +29,7 @@ export function initialiseFirebaseApp() {
     clientX509CertUrl: SA_CERT_URL,
   };
 
-  console.log(`Initializing the Firestore app (${SA_PROJECT_NAME})`);
+  console.log(`### Initializing the Firestore app (${SA_PROJECT_NAME}) ###`);
   // Initialize the app
   if (apps.length < 1) {
     initializeApp({
