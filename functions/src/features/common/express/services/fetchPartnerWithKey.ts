@@ -10,7 +10,7 @@ import { FSCollectionConfig } from '../../firebase/firestore/FSCollectionConfig'
  * @param req
  * @param partnerKey
  */
-export async function findPartnerWithKey(
+export async function fetchPartnerWithKey(
   req: Request,
   partnerKey: string,
   logger: Logger,
@@ -43,17 +43,3 @@ export async function findPartnerWithKey(
 
   return ok(partner);
 }
-
-//   const allPartners: PartnerInfo[] = [
-//     {
-//       externalId: 'partner_123',
-//       name: 'test',
-//       apiKeys: [
-//         {
-//           disabled: false,
-//           apiKey: 'apikey_123',
-//           role: 'fully_trusted_partner',
-//         },
-//       ],
-//     },
-//   ];

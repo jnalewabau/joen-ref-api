@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 
 import { HTTP_INTERNAL_SERVICE_ERROR_CODE, HTTP_UNAUTHORIZED_CODE } from './types/constants';
 import { createServiceLogger } from '../logger/createServiceLogger';
-import { findPartnerWithKey } from './services/findPartnerWithKey';
+import { fetchPartnerWithKey } from './services/fetchPartnerWithKey';
+import { setPartnerAPIKeyInRequest, setPartnerInRequest } from './utils/setPartnerInfoInRequest';
 
 /**
  * Authenticates that a call to an API is allowed for a partner - partners
@@ -25,7 +26,7 @@ export async function authenticatePartner(req: Request, resp: Response, next: Ne
       return resp.status(HTTP_UNAUTHORIZED_CODE).send();
     }
 
-    const findPartnerCall = await findPartnerWithKey(req, xApiKey, serviceLogger);
+    const findPartnerCall = await fetchPartnerWithKey(req, xApiKey, serviceLogger);
 
     if (findPartnerCall.isErr()) {
       const error = findPartnerCall.error;
@@ -54,10 +55,9 @@ export async function authenticatePartner(req: Request, resp: Response, next: Ne
       });
     }
 
-    // Check to see the partner can call the API based on the role associated
-    // with the API key
-
     // Store the partner information in the request so it can be used downstream
+    setPartnerInRequest(partnerInfo, req);
+    setPartnerAPIKeyInRequest(partnerKey, req);
 
     //   // Keep going down the middleware chain
     return next();
@@ -65,63 +65,3 @@ export async function authenticatePartner(req: Request, resp: Response, next: Ne
     return resp.status(HTTP_INTERNAL_SERVICE_ERROR_CODE).send();
   }
 }
-
-//   const rf = new UpstreetResponseFactory(fnLogger, functionName);
-//   // Get all the partner API keys in the system
-//   const partnerAPIKeys = await getPartnerIdsAndKeys(fnLogger);
-//   // Do we have a partner with the API key passed in?
-//   const validPartner = partnerAPIKeys.find((info) => info.partnerApiKey === partnerKey);
-//   // If there is not valid partner then fail
-//   if (!validPartner) {
-//     fnLogger.error(`authentication failed: Partner key not recognized ${partnerKey}`, {
-//       partnerKey,
-//     });
-//     return rf.unauthorized(`Partner key ${partnerKey} not recognized`);
-//   }
-//   const partnerId = validPartner.partnerId;
-//   // Get the Partners information
-//   const partnerDetailsCall = await getUpstreetPartner(partnerId, fnLogger);
-//   if (partnerDetailsCall.isErr()) {
-//     fnLogger.error(`authentication failed: Partner details not found in firebase ${partnerId}`, {
-//       partnerId,
-//     });
-//     return rf.internalServiceError();
-//   }
-//   const partnerDetails = partnerDetailsCall.value;
-//   // Log the fact that a partner is making a call
-//   fnLogger.debug(
-//     `Partner ${partnerId}-${partnerDetails.name} is attempting to call API ${req.method}-${req.path}`,
-//     {
-//       validPartner,
-//     },
-//   );
-//   // Test to see whether the Partner can access thr API they are calling
-//   const canAccessCall = await canPartnerAccessEndpoint(req, partnerDetails, fnLogger);
-//   if (canAccessCall.isErr()) {
-//     const error = canAccessCall.error;
-//     if (error === 'no-api-for-endpoint') {
-//       // Must be no permission
-//       fnLogger.error(
-//         `Partner ${partnerDetails.name} is calling an unknown api endpoint : ${req.path}`,
-//         {
-//           partnerDetails,
-//           path: req.path,
-//         },
-//       );
-//       return rf.badRequest(`Calling an unknown Upstreet API endpoint : ${req.path}`);
-//     }
-//     // Must be no permission
-//     fnLogger.error(`Partner ${partnerDetails.name} does not have access to request : ${req.path}`, {
-//       partnerDetails,
-//       path: req.path,
-//     });
-//     return rf.unauthorized();
-//   }
-//   const grantedApiCall = canAccessCall.value;
-//   // Log an approval for an API call
-//   fnLogger.debug(`Partner ${partnerId} has permission for ${grantedApiCall}`, {
-//     validPartner,
-//     grantedApiCall,
-//   });
-//   return rf.okWithData<PartnerId>(partnerId);
-// }

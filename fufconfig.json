@@ -3,7 +3,21 @@
     {
       "name": "middleware",
       "files": [
-        "functions/src/features/common/express/authenticatePartner.ts"
+        "functions/src/features/common/express/authenticatePartner.ts",
+        "functions/src/features/common/express/authorizePartner.ts"
+      ]
+    },
+    {
+      "name": "main",
+      "files": [
+        "functions/src/index.ts",
+        "functions/src/features/foo/fooService.ts"
+      ]
+    },
+    {
+      "name": "utils",
+      "files": [
+        "functions/src/features/common/firebase/firestore/FSCollectionConfig.ts"
       ]
     }
   ]
