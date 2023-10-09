@@ -7,10 +7,11 @@ import { readFoo } from './fetchFoo';
 import { deleteFoo } from './deleteFoo';
 import { updateFoo } from './updateFoo';
 import { authenticatePartner } from '../common/express/authenticatePartner';
-import { initialiseFirebaseApp } from '../common/firebase/initialiseFirebaseApp';
+import { authorizePartner } from '../common/express/authorizePartner';
+// import { initialiseFirebaseApp } from '../common/firebase/initialiseFirebaseApp';
 // import { authenticatePartnerKey } from '../../middleware/partnerApis/authenticatePartnerKey';
 
-initialiseFirebaseApp();
+// initialiseFirebaseApp();
 
 const app = express();
 app.use(express.json());
@@ -28,6 +29,7 @@ routes.delete('/foo/:id', deleteFoo);
 v1Routes.use('/v1', routes);
 
 app.use(authenticatePartner);
+app.use(authorizePartner);
 app.use(v1Routes);
 
 export const fooService = newHttpFunction(app);
